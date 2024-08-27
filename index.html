@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ReactJS Frontend Task</title>
+
+    <script
+      src="https://unpkg.com/react@18/umd/react.development.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"
+      crossorigin
+    ></script>
+
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+      input[type="text"] {
+        width: 100%;
+        border: none;
+        padding: 5px;
+        box-sizing: border-box;
+      }
+      input[type="text"]:focus {
+        outline: none;
+        border-bottom: 2px solid #00aaff;
+      }
+      button {
+        margin-top: 10px;
+        padding: 10px 15px;
+        background-color: #00aaff;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+      button:disabled {
+        background-color: #cccccc;
+      }
+      .loading {
+        margin-top: 10px;
+        color: #00aaff;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const TaskTable = () => {
+        const [isSubmitting, setIsSubmitting] = React.useState(false);
+        const [data, setData] = React.useState([
+          {
+            task: "Onboarding Call",
+            values: ["", "", ""], // Three columns in "Details"
+          },
+          {
+            task: "Google Search Console Access",
+            values: ["", "", ""],
+          },
+          {
+            task: "Google Analytics Access",
+            values: ["", "", ""],
+          },
+          {
+            task: "Website Access",
+            values: ["", "", ""],
+          },
+          {
+            task: "Technical Audit",
+            values: ["", "", ""],
+          },
+          {
+            task: "Anchor Text and Semantic Analysis",
+            values: ["", "", ""],
+          },
+          {
+            task: "Competitor Analysis",
+            values: ["", "", ""],
+          },
+          {
+            task: "Anchor Text / URL Mapping",
+            values: ["", "", ""],
+          },
+          {
+            task: "Google Data Studio Report - Local Reporting Suite",
+            values: ["", "", ""],
+          },
+          {
+            task: "Site Level Optimization",
+            values: ["", "", ""],
+          },
+          {
+            task: "On Page Optimization",
+            values: ["", "", ""],
+          },
+          {
+            task: "Content Creation",
+            values: ["", "", ""],
+          },
+          {
+            task: "Content Publishing",
+            values: ["", "", ""],
+          },
+          {
+            task: "Premium Press Release",
+            values: ["", "", ""],
+          },
+          {
+            task: "Authority Niche Placements",
+            values: ["", "", ""],
+          },
+          {
+            task: "Review Management",
+            values: ["", "", ""],
+          },
+          {
+            task: "Index Links",
+            values: ["", "", ""],
+          },
+          {
+            task: "Video Recap",
+            values: ["", "", ""],
+          },
+        ]);
+
+        const handleInputChange = (taskIndex, columnIndex, event) => {
+          const newData = [...data];
+          newData[taskIndex].values[columnIndex] = event.target.value;
+          setData(newData);
+        };
+
+        const handleSubmit = () => {
+          const isValid = data.every((item) =>
+            item.values.every((value) => value.trim() !== "")
+          );
+
+          if (!isValid) {
+            alert("Please fill out all fields before submitting.");
+            return;
+          }
+
+          setIsSubmitting(true);
+
+          const apiEndpoint = "https://your-api-endpoint.com/api";
+          const dataToPost = { tasks: data };
+
+          fetch(apiEndpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(dataToPost),
+          })
+            .then((response) => response.json())
+            .then((responseData) => {
+              console.log("Success:", responseData);
+              alert("Data submitted successfully!");
+              setData(
+                data.map((item) => ({
+                  ...item,
+                  values: item.values.map(() => ""),
+                }))
+              );
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              alert(
+                `Failed to submit data. ${
+                  error.message || "Please try again."
+                }`
+              );
+            })
+            .finally(() => {
+              setIsSubmitting(false);
+            });
+        };
+
+        return (
+          <div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Task</th>
+                  <th colSpan="3">Details</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.map((item, taskIndex) => (
+                  <tr key={taskIndex}>
+                    <td>{item.task}</td>
+                    {item.values.map((value, columnIndex) => (
+                      <td key={columnIndex}>
+                        <input
+                          type="text"
+                          value={value}
+                          onChange={(e) =>
+                            handleInputChange(taskIndex, columnIndex, e)
+                          }
+                          disabled={isSubmitting}
+                        />
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <button onClick={handleSubmit} disabled={isSubmitting}>
+              {isSubmitting ? "Submitting..." : "Submit"}
+            </button>
+            {isSubmitting && <div className="loading">Loading...</div>}
+          </div>
+        );
+      };
+
+      ReactDOM.createRoot(document.getElementById("root")).render(<TaskTable />);
+    </script>
+  </body>
+</html>
